@@ -1,0 +1,29 @@
+import heapq
+
+def prim(graph):
+    visited = set()
+    start_node = next(iter(graph))
+    visited.add(start_node)
+    edges = [
+        (weight, start_node, to)
+        for to, weight in graph[start_node].items()
+    ]
+    heapq.heapify(edges)
+    while edges:
+        weight, frm, to = heapq.heappop(edges)
+        if to not in visited:
+            visited.add(to)
+            yield frm, to, weight
+            for to_next, weight_next in graph[to].items():
+                if to_next not in visited:
+                    heapq.heappush(edges, (weight_next, to, to_next))
+
+graph = {
+    'A': {'B': 1, 'C': 4},
+    'B': {'A': 1, 'C': 2, 'D': 5},
+    'C': {'A': 4, 'B': 2, 'D': 1},
+    'D': {'B': 5, 'C': 1},
+}
+
+for edge in prim(graph):
+    print(edge)
